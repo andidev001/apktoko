@@ -1,0 +1,1 @@
+﻿<?php require 'vendor/autoload.php'; \ = require_once 'bootstrap/app.php'; \->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap(); Auth::login(App\Models\User::first()); echo app()->handle(Request::create('/transactions', 'GET'))->getContent();

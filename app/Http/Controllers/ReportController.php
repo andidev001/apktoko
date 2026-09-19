@@ -98,4 +98,98 @@ class ReportController extends Controller
 
         return view('reports.print-rekap', compact('transactions', 'setting', 'request'));
     }
+    public function keuntungan(Request $request)
+    {
+        $query = Transaction::with('details')->where('status', 'lunas')->orderBy('created_at', 'desc');
+
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $query->whereBetween('created_at', [
+                $request->start_date . ' 00:00:00',
+                $request->end_date . ' 23:59:59'
+            ]);
+        }
+
+        $transactions = $query->get();
+        
+        $total_keuntungan = 0;
+        foreach ($transactions as $trx) {
+            $profit_trx = 0;
+            foreach ($trx->details as $d) {
+                $profit_trx += ($d->harga_jual - $d->harga_beli) * $d->jumlah;
+            }
+            $trx->profit = $profit_trx;
+            $total_keuntungan += $profit_trx;
+        }
+
+        return view('reports.keuntungan', compact('total_keuntungan', 'request'));
+    }
+
+    public function dataKeuntungan(Request $request)
+    {
+        $reports = Transaction::with(['details.product'])->where('status', 'lunas')->orderBy('created_at', 'desc');
+
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $reports->whereBetween('created_at', [
+                $request->start_date . ' 00:00:00',
+                $request->end_date . ' 23:59:59'
+            ]);
+        }
+
+        return datatables()->of($reports)
+            ->addColumn('waktu', function ($trx) {
+                return $trx->created_at->format('d M Y H:i');
+            })
+            ->editColumn('no_faktur', function ($trx) {
+                $pembeli = $trx->nama_pelanggan ? '<br><small class="text-muted"><i class="fas fa-user"></i> ' . e($trx->nama_pelanggan) . '</small>' : '';
+                return '<strong>' . $trx->no_faktur . '</strong>' . $pembeli;
+            })
+            ->addColumn('items', function ($trx) {
+                $html = '<ul class="mb-0 ps-3 text-muted" style="font-size: 0.85rem">';
+                foreach ($trx->details as $d) {
+                    $satuan = $d->product->satuan ?? 'Pcs';
+                    $jumlah = (float) $d->jumlah;
+                    $html .= '<li>' . $d->product->nama_barang . ' (' . $jumlah . ' ' . $satuan . ')</li>';
+                }
+                $html .= '</ul>';
+                return $html;
+            })
+            ->addColumn('keuntungan', function ($trx) {
+                $profit_trx = 0;
+                foreach ($trx->details as $d) {
+                    $profit_trx += ($d->harga_jual - $d->harga_beli) * $d->jumlah;
+                }
+                return '<span class="text-success fw-bold">Rp ' . number_format($profit_trx, 0, ',', '.') . '</span>';
+            })
+            ->rawColumns(['no_faktur', 'items', 'keuntungan'])
+            ->make(true);
+    }
+
+    public function printKeuntungan(Request $request)
+    {
+        $query = Transaction::with('details.product')->where('status', 'lunas')->orderBy('created_at', 'desc');
+
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $query->whereBetween('created_at', [
+                $request->start_date . ' 00:00:00',
+                $request->end_date . ' 23:59:59'
+            ]);
+        }
+
+        $transactions = $query->get();
+        
+        $total_keuntungan = 0;
+        foreach ($transactions as $trx) {
+            $profit_trx = 0;
+            foreach ($trx->details as $d) {
+                $profit_trx += ($d->harga_jual - $d->harga_beli) * $d->jumlah;
+            }
+            $trx->profit = $profit_trx;
+            $total_keuntungan += $profit_trx;
+        }
+
+        $setting = \App\Models\Setting::first();
+
+        $pdf = app('dompdf.wrapper')->loadView('reports.print-keuntungan', compact('transactions', 'total_keuntungan', 'request', 'setting'));
+        return $pdf->stream('laporan-keuntungan.pdf');
+    }
 }

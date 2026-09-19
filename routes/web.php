@@ -43,6 +43,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('reports/data', [ReportController::class, 'data'])->name('reports.data');
     Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
     Route::get('reports/rekap', [ReportController::class, 'rekap'])->name('reports.rekap');
+    Route::get('reports/keuntungan/data', [ReportController::class, 'dataKeuntungan'])->name('reports.keuntungan.data');
+    Route::get('reports/keuntungan', [ReportController::class, 'keuntungan'])->name('reports.keuntungan');
+    Route::get('reports/keuntungan/print', [ReportController::class, 'printKeuntungan'])->name('reports.keuntungan.print');
+    Route::get('reports/print', [ReportController::class, 'printRekap'])->name('reports.print');
     Route::get('reports/print', [ReportController::class, 'printRekap'])->name('reports.print');
 
     // Backup & Restore

@@ -255,6 +255,12 @@
                                     <i class="fas fa-print me-1"></i> Rekap & Cetak
                                 </a>
                             </li>
+                            <li class="nav-item mb-1">
+                                <a class="nav-link {{ request()->routeIs('reports.keuntungan') ? 'active fw-bold' : '' }}"
+                                    href="{{ route('reports.keuntungan') }}" style="font-size: 0.9em; padding-left: 20px;">
+                                    <i class="fas fa-chart-pie me-1"></i> Laporan Keuntungan
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </li>

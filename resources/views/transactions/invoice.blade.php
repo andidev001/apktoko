@@ -102,15 +102,14 @@
                     @endif
                     <div>
                         <h4 class="mb-0 text-primary fw-bold">{{ $setting->shop_name }}</h4>
-                        <div class="text-muted" style="font-size: 0.8rem;">
-                            {!! nl2br(e($setting->shop_address)) !!} <br>
-                            Telp: {{ $setting->shop_phone }}
+                        <div class="text-muted" style="font-size: 0.8rem; max-width: 450px;">
+                            {{ str_replace(["\r\n", "\r", "\n"], ' ', $setting->shop_address) }} | <strong>Telp:</strong> {{ $setting->shop_phone }}
                         </div>
                     </div>
                 </div>
                 <div class="text-end">
-                    <h5 class="mb-1 text-muted text-uppercase fw-bold" style="letter-spacing: 1px;">TAGIHAN / INVOICE
-                    </h5>
+                    <div class="mb-1 text-muted text-uppercase fw-bold" style="letter-spacing: 1px; font-size: 0.95rem;">TAGIHAN / INVOICE
+                    </div>
                     <span class="fs-6"><strong>#{{ $transaction->no_faktur }}</strong></span>
                 </div>
             </div>

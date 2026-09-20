@@ -216,6 +216,7 @@
                         <i class="fas fa-home"></i> Dashboard
                     </a>
                 </li>
+                @if(auth()->check() && auth()->user()->role === 'admin')
                 <li class="nav-item mb-1">
                     <a class="nav-link {{ request()->routeIs('products.index') ? 'active' : '' }}"
                         href="{{ route('products.index') }}">
@@ -228,6 +229,7 @@
                         <i class="fas fa-boxes-stacked"></i> Stok Barang
                     </a>
                 </li>
+                @endif
                 <li class="nav-item mb-1">
                     <a class="nav-link {{ request()->routeIs('transactions.index') || request()->routeIs('transactions.paymentForm') ? 'active' : '' }}"
                         href="{{ route('transactions.index') }}">
@@ -249,6 +251,7 @@
                                     <i class="fas fa-list-ul me-1"></i> Laporan Transaksi
                                 </a>
                             </li>
+                            @if(auth()->check() && auth()->user()->role === 'admin')
                             <li class="nav-item mb-1">
                                 <a class="nav-link {{ request()->routeIs('reports.rekap') ? 'active fw-bold' : '' }}"
                                     href="{{ route('reports.rekap') }}" style="font-size: 0.9em; padding-left: 20px;">
@@ -261,13 +264,21 @@
                                     <i class="fas fa-chart-pie me-1"></i> Laporan Keuntungan
                                 </a>
                             </li>
+                            @endif
                         </ul>
                     </div>
                 </li>
+                @if(auth()->check() && auth()->user()->role === 'admin')
                 <li class="nav-item mb-1">
                     <a class="nav-link {{ request()->routeIs('settings.index') ? 'active' : '' }}"
                         href="{{ route('settings.index') }}">
                         <i class="fas fa-cogs"></i> Pengaturan Toko
+                    </a>
+                </li>
+                <li class="nav-item mb-1">
+                    <a class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}"
+                        href="{{ route('users.index') }}">
+                        <i class="fas fa-users"></i> Pengaturan User
                     </a>
                 </li>
                 <li class="nav-item mb-1 mt-2 border-top pt-2">
@@ -276,6 +287,7 @@
                         <i class="fas fa-database"></i> Backup & Restore
                     </a>
                 </li>
+                @endif
             </ul>
         </div>
 
@@ -289,10 +301,20 @@
                     <div class="dropdown">
                         <a href="#" class="d-flex align-items-center text-dark text-decoration-none dropdown-toggle"
                             id="dropdownUser" data-bs-toggle="dropdown">
-                            <i class="fas fa-user-circle fa-2x text-primary me-2"></i>
+                            @if(Auth::user()->photo)
+                                <img src="{{ asset('storage/' . Auth::user()->photo) }}" alt="User Photo" class="rounded-circle me-2" style="width: 35px; height: 35px; object-fit: cover;">
+                            @else
+                                <i class="fas fa-user-circle fa-2x text-primary me-2"></i>
+                            @endif
                             <strong>{{ Auth::user()->name }}</strong>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end shadow">
+                            <li>
+                                <a class="dropdown-item" href="{{ route('profile.edit') }}">
+                                    <i class="fas fa-user-cog me-2"></i> Profil Saya
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
                             <li>
                                 <form action="{{ route('logout') }}" method="POST">
                                     @csrf

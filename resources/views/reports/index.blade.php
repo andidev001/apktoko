@@ -1,6 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Laporan Penjualan')
 @section('content')
+    @if(auth()->check() && auth()->user()->role === 'admin')
     <div class="row g-4 mb-4">
         <div class="col-sm-6 col-xl-4">
             <div class="card dash-card h-100">
@@ -51,6 +52,8 @@
             </div>
         </div>
     </div>
+    @endif
+
 
     <div class="card">
         <div class="card-header border-bottom">

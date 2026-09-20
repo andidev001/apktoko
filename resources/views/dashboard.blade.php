@@ -3,6 +3,7 @@
 
 @section('content')
     <div class="row g-4 mb-4">
+        @if(auth()->check() && auth()->user()->role === 'admin')
         <!-- Hari Ini -->
         <div class="col-sm-6 col-xl-3">
             <div class="card dash-card h-100">
@@ -36,6 +37,7 @@
                 </div>
             </div>
         </div>
+        @endif
 
         <!-- Transaksi -->
         <div class="col-sm-6 col-xl-3">
